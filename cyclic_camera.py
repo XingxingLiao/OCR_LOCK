@@ -4,6 +4,8 @@ import threading
 from picamera2 import Picamera2
 
 class CyclicCameraCapture(threading.Thread):
+    
+
     def __init__(self, save_dir, max_files=100, interval=300, file_lock=None):
         super().__init__()
         self.save_dir = save_dir
@@ -16,6 +18,11 @@ class CyclicCameraCapture(threading.Thread):
             os.makedirs(self.save_dir)
 
         self.picam2 = Picamera2()
+
+        # 创建拍照配置，设置分辨率为 3280x2464
+        config = self.picam2.create_still_configuration(main={"size": (3280, 2464)})
+        self.picam2.configure(config)
+
         self.picam2.start()
 
     def shift_files(self):

@@ -1,8 +1,8 @@
-from camera_capture.cyclic_camera import CyclicCameraCapture
-from image_processing.preprocess import preprocess_image
-from ocr_api.client import send_to_ocr_api
-from postprocessing.postprocess import extract_numbers, extract_on_off
-from mqtt_publisher.publisher import send_mqtt_message
+from cyclic_camera import CyclicCameraCapture
+from image_processing import preprocess_image
+from ocr_api import send_to_ocr_api
+from postprocessing import extract_numbers, extract_on_off
+from mqtt_publisher import send_mqtt_message
 from config import image_path, crop_coordinates
 
 import threading
@@ -10,15 +10,13 @@ import time
 import json
 
 def run_ocr_and_publish(file_lock):
-    with file_lock:
-        def run_ocr_and_publish(file_lock):
     with file_lock:  # 读取图片和裁剪都在锁内，防止摄像头线程写入冲突
         all_results = []
         on_off_results = []
 
         for i, coords in enumerate(crop_coordinates):
             region_id = i + 1
-            processed_path = f"/home/CITSEM/Ocr_Project/OCR_MQTT/Orignal_Image/processed_region_{region_id}.jpeg"
+            processed_path = f"/home/CITSEM/ocr/OCR_LOCK/processed_photo/processed_region_{region_id}.jpeg"
 
             if preprocess_image(image_path, coords, processed_path):
                 response = send_to_ocr_api(processed_path)
@@ -44,13 +42,12 @@ def run_ocr_and_publish(file_lock):
 
         send_mqtt_message(message)
         print("[INFO] Final Message:", json.dumps(message, indent=2))
-        pass
 
 if __name__ == "__main__":
-    save_path = "/home/pi/camera_images"
+    save_path = "/home/CITSEM/ocr/OCR_LOCK/image"
     file_lock = threading.Lock()
 
-    camera_thread = CyclicCameraCapture(save_path, max_files=100, interval=300, file_lock=file_lock)
+    camera_thread = CyclicCameraCapture(save_path, max_files=100, interval=10, file_lock=file_lock)
     camera_thread.start()
 
     try:
@@ -60,3 +57,4 @@ if __name__ == "__main__":
     except KeyboardInterrupt:
         camera_thread.stop()
         camera_thread.join()
+
