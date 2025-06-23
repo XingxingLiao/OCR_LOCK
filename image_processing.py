@@ -22,7 +22,12 @@ def preprocess_image(image_path, crop_coords, save_path):
         print(f"[ERROR] Cropped image is empty.")
         return False
 
-    denoised = cv2.fastNlMeansDenoising(cropped, None, 30, 7, 21)
-    cv2.imwrite(save_path, denoised)
-    return True
+    denoised = cv2.fastNlMeansDenoisingColored(cropped, None, 30, 30, 7, 21)
 
+    gray = cv2.cvtColor(denoised, cv2.COLOR_BGR2GRAY)
+
+
+    _, binary = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+
+    cv2.imwrite(save_path, binary)
+    return True
