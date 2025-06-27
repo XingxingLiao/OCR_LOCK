@@ -5,7 +5,7 @@ image_path = "/home/CITSEM/ocr/OCR_LOCK/image/image_000.jpg"
 
 mqtt_broker = "138.100.58.174"
 mqtt_port = 1883
-mqtt_topic = "test/message"
+mqtt_topic = "ocr/data"
 
 crop_coordinates = [
     (409, 624, 245, 112),   # Region 1
