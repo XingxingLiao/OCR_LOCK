@@ -14,7 +14,7 @@ import ssl
 import json
 from config import mqtt_broker, mqtt_port, mqtt_topic, mqtt_username, mqtt_password
 
-def publish_message(payload):
+def send_message(payload):
     client = mqtt.Client()
 
     client.tls_set(tls_version=ssl.PROTOCOL_TLS)
