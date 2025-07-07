@@ -14,7 +14,7 @@ import ssl
 import json
 from config import mqtt_broker, mqtt_port, mqtt_topic, mqtt_username, mqtt_password
 
-def send_mqtt_message(payload):
+def send_mqtt_message(mes):
     client = mqtt.Client()
 
     client.tls_set(tls_version=ssl.PROTOCOL_TLS)
@@ -26,9 +26,9 @@ def send_mqtt_message(payload):
     try:
         client.connect(mqtt_broker, mqtt_port)
         client.loop_start()
-        client.publish(mqtt_topic, payload)
+        client.publish(mqtt_topic, json.dumps(mes))
         client.loop_stop()
         client.disconnect()
-        print(f"succeed in sending {mqtt_topic}: {payload}")
+        print(f"succeed in sending {mqtt_topic}: {mes}")
     except Exception as e:
         print(f"fail to send data: {e}")
